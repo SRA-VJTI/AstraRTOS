@@ -81,15 +81,25 @@ hang:
 .weak USART2_IRQHandler
 .weak USART3_IRQHandler
 
+.thumb_func
 NMI_Handler:
+.thumb_func
 HardFault_Handler:
+.thumb_func
 MemManage_Handler:
+.thumb_func
 BusFault_Handler:
+.thumb_func
 UsageFault_Handler:
+.thumb_func
 SysTick_Handler:
+.thumb_func
 default:
+.thumb_func
 USART1_IRQHandler:
+.thumb_func
 USART2_IRQHandler:
+.thumb_func
 USART3_IRQHandler:
     b .
 
