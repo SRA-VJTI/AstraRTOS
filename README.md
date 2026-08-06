@@ -38,13 +38,14 @@ sudo apt install gcc-arm-none-eabi make qemu-system-arm openocd
 ## Build
 
 ```bash
-make          # build/astra.elf, build/astra.bin
-make qemu     # run under qemu-system-arm
-make flash    # openocd flash via stlink
+make                       # build/astra.elf, build/astra.bin
+make SOURCE=path/to/file.c # build any file in the directory
+make qemu                  # run under qemu-system-arm
+make flash                 # openocd flash via stlink
 make clean
 ```
 
-The application entry point is `app/main.c` and sample programs live in `samples/`, replacing the `app/main.c` with any sample and then rebuilding produces a runnable image
+The application entry point is `app/main.c`. To build any sample program from the `samples/` directory instead, pass the file path to the `SOURCE` variable during compilation, and then rebuilding produces a runnable image
 
 ## Contributing
 

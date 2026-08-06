@@ -5,12 +5,14 @@ This directory contains sample applications demonstrating the features of AstraR
 You can run these samples either directly on the target **STM32 hardware** or via **QEMU** simulation.
 
 ## Running a sample
-To run a specific sample, replace the entry point in the top-level `Makefile` from `app/main.c` to the sample you want. 
+To run a specific sample, provide the path to sample in the `make` command
+```bash
+make SOURCE=path/to/sample/main.c
+```
 
 For example, to run the mutex sample:
-```makefile
-# In your Makefile, swap the source file:
-C_SOURCES = samples/mutex_basic/main.c ...  
+```bash
+make SOURCE=samples/mutex_basic/main.c
 ```
 
 ## Hardware
@@ -34,5 +36,5 @@ Since QEMU focuses on CPU instruction emulation rather than register-accurate pe
 
 To run the simulation in QEMU, use:
 ```bash
-make qemu
+make qemu SOURCE=path/to/sample/main.c
 ```

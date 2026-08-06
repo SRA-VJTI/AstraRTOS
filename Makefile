@@ -9,7 +9,8 @@ SIZE = $(PREFIX)size 	   # prints table with sizes
 TARGET = astra
 BUILD = build
 
-C_SOURCES = app/main.c kernel/port/system_init.c drivers/src/rcc.c drivers/src/uart.c drivers/src/gpio.c kernel/src/task.c kernel/src/mutex.c kernel/src/sem.c kernel/src/heap.c kernel/src/stats.c kernel/src/timer.c kernel/src/queue.c
+SOURCE ?=  app/main.c
+C_SOURCES = kernel/port/system_init.c drivers/src/rcc.c drivers/src/uart.c drivers/src/gpio.c kernel/src/task.c kernel/src/mutex.c kernel/src/sem.c kernel/src/heap.c kernel/src/stats.c kernel/src/timer.c kernel/src/queue.c
 AS_SOURCES = kernel/port/startup_stm32f429zi.s 
 
 LDSCRIPT = link/stm32f429zi.ld 
@@ -22,6 +23,7 @@ ASFLAGS = $(MCU) -Wall
 LDFLAGS = $(MCU) -T$(LDSCRIPT) -nostdlib -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(TARGET).map
 
 C_OBJECTS = $(addprefix $(BUILD)/, $(C_SOURCES:.c=.o))		# replace main.c with main.o	
+C_OBJECTS += $(addprefix $(BUILD)/, $(SOURCE:.c=.o))
 AS_OBJECTS = $(addprefix $(BUILD)/, $(AS_SOURCES:.s=.o))	# creates startup_stm32f429zi.o
 
 OBJECTS = $(C_OBJECTS) $(AS_OBJECTS)
