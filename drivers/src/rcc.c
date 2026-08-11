@@ -1,15 +1,6 @@
 #include "rcc.h"
 #include "system_init.h"
 
-#define RCC_BASE 0x40023800
-
-#define RCC_AHB1ENR (*(volatile uint32_t *)(RCC_BASE + 0x30)) // For GPIOA-GPIOI, DMA1,2
-#define RCC_AHB2ENR (*(volatile uint32_t *)(RCC_BASE + 0x34)) // For USB, RNG
-#define RCC_AHB3ENR (*(volatile uint32_t *)(RCC_BASE + 0x38)) // External Memory (FSMC/FMC)
-#define RCC_APB1ENR (*(volatile uint32_t *)(RCC_BASE + 0x40)) // For UART2,3 , I2C
-#define RCC_APB2ENR (*(volatile uint32_t *)(RCC_BASE + 0x44)) // For UART1, ADC, SPI1
-#define RCC_CSR (*(volatile uint32_t *)(RCC_BASE + 0x74))     // Reset Flags and LSI Enable
-
 void rcc_enable_gpio(uint8_t port) {
     if(port <= 10) {
         RCC_AHB1ENR |= (1 << port); // Enables particular GPIO family
@@ -67,5 +58,48 @@ uint32_t rcc_get_apb2_freq(void) {
     }
     else {
         return HCLK_FREQ >> (ppre2 - 3);
+    }
+}
+
+void rcc_enable_timer(uint32_t timer) {
+    switch(timer) {
+    case TIM1_BASE:
+        RCC_APB2ENR |= (1 << 0);
+        break;
+    case TIM2_BASE:
+        RCC_APB1ENR |= (1 << 0);
+        break;
+    case TIM3_BASE:
+        RCC_APB1ENR |= (1 << 1);
+        break;
+    case TIM4_BASE:
+        RCC_APB1ENR |= (1 << 2);
+        break;
+    case TIM5_BASE:
+        RCC_APB1ENR |= (1 << 3);
+        break;
+    case TIM8_BASE:
+        RCC_APB2ENR |= (1 << 1);
+        break;
+    case TIM9_BASE:
+        RCC_APB2ENR |= (1 << 16);
+        break;
+    case TIM10_BASE:
+        RCC_APB2ENR |= (1 << 17);
+        break;
+    case TIM11_BASE:
+        RCC_APB2ENR |= (1 << 18);
+        break;
+    case TIM12_BASE:
+        RCC_APB1ENR |= (1 << 6);
+        break;
+    case TIM13_BASE:
+        RCC_APB1ENR |= (1 << 7);
+        break;
+    case TIM14_BASE:
+        RCC_APB1ENR |= (1 << 8);
+        break;
+    default:
+        break;
     }
 }
