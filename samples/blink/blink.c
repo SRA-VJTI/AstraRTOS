@@ -16,7 +16,6 @@ void blink_task(void) {
 
 int main(void) {
     system_init();
-    systick_init();
     rcc_enable_gpio(GPIOG_EN);
     os_heap_init();
     os_task_create(blink_task, 2, 128);

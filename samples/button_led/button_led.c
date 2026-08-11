@@ -24,7 +24,6 @@ void button_task(void) {
 
 int main(void) {
     system_init();
-    systick_init();
     rcc_enable_gpio(GPIOG_EN);
     rcc_enable_gpio(GPIOA_EN);
     os_heap_init();
