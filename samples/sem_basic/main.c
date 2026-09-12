@@ -62,8 +62,15 @@ void task_d(void) {
 }
 
 int main(void) {
+    uart_config_t config = {.baud_rate = 9600,
+                            .data_bits = 8,
+                            .parity = UART_PARITY_DISABLE,
+                            .stop_bits = UART_STOPBITS_1,
+                            .mode = UART_MODE_TX_RX,
+                            .irq_flags = UART_IRQ_RXNE};
+
     system_init();
-    uart_init(UART_BASE);
+    uart_init(UART_BASE, &config);
 
     os_heap_init();
     os_sem_init(&resource_sem, MAX_CONCURRENT_USERS, MAX_CONCURRENT_USERS);
