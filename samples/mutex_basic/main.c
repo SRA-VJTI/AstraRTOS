@@ -65,7 +65,6 @@ void task2(void) {
 
 int main(void) {
     system_init();
-    systick_init();
     uart_init(USART1_BASE);
     os_heap_init();
 

@@ -33,7 +33,6 @@ static void task_timer_demo(void) {
 
 int main(void) {
     system_init();
-    systick_init();
     os_heap_init();
     os_task_create(task_timer_demo, 2, 256);
     os_start();

@@ -1,6 +1,7 @@
 /* AstraRTOS - Linker script for stm32f429zi */
 
 _estack = ORIGIN(SRAM) + LENGTH(SRAM);  /* start of stack (downwards growth) */
+_Min_stack_size = 1024;  /* stack size reserved for the msp */
 
 MEMORY
 {
@@ -56,4 +57,6 @@ SECTIONS
         . = ALIGN(4);
         _ebss = .;
     } >SRAM
+    _sheap = ALIGN(_ebss,32);
+    _eheap = _estack - _Min_stack_size;
 }

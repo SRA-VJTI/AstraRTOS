@@ -29,60 +29,125 @@ static int get_uart_idx(uint32_t base) {
     }
 }
 
-// Starts UART depending on the base provided
-void uart_init(uint32_t base) {
-    if(base == USART2_BASE) {
-        rcc_enable_gpio(GPIOA_EN);
-        rcc_enable_uart(USART2_EN);
-
-        GPIO_MODER(GPIOA_BASE) &= ~((3 << (2 * 2)) | (3 << (3 * 2))); // Clear Pins 2 and 3
-        GPIO_MODER(GPIOA_BASE) |= ((2 << (2 * 2)) | (2 << (3 * 2)));  // Sets to AF mode
-
-        GPIO_AFRL(GPIOA_BASE) &= ~((0xF << (2 * 4)) | (0xF << (3 * 4))); // Clear
-        GPIO_AFRL(GPIOA_BASE) |= ((7 << (2 * 4)) | (7 << (3 * 4)));      // Selecting AF to USART2
-
-        USART_BRR(base) = 0x1250; // 9600 BaudRate (Condition: Peripheral Clock (APB1) = 45MHz)
-
-        NVIC_ISER1 |= (1 << 6);
-    }
-    else if(base == USART1_BASE) {
-        rcc_enable_gpio(GPIOA_EN);
+static void uart_clock_enable(uint32_t base) {
+    if(base == USART1_BASE) {
         rcc_enable_uart(USART1_EN);
-
-        GPIO_MODER(GPIOA_BASE) &= ~((3 << (9 * 2)) | (3 << (10 * 2))); // Clear Pins 9 and 10
-        GPIO_MODER(GPIOA_BASE) |= ((2 << (9 * 2)) | (2 << (10 * 2)));  // Sets to AF mode
-
-        GPIO_AFRH(GPIOA_BASE) &= ~((0xF << (1 * 4)) | (0xF << (2 * 4))); // Clear
-        GPIO_AFRH(GPIOA_BASE) |= ((7 << (1 * 4)) | (7 << (2 * 4)));      // Selecting AF to USART1
-
-        USART_BRR(base) = 0x249F; // 9600 BaudRate (Condition: Peripheral Clock (APB2) = 90MHz)
-
-        NVIC_ISER1 |= (1 << 5);
+    }
+    else if(base == USART2_BASE) {
+        rcc_enable_uart(USART2_EN);
     }
     else if(base == USART3_BASE) {
-        rcc_enable_gpio(GPIOB_EN);
         rcc_enable_uart(USART3_EN);
-
-        GPIO_MODER(GPIOB_BASE) &= ~((3 << (10 * 2)) | (3 << (11 * 2))); // Clear Pins 10 and 11
-        GPIO_MODER(GPIOB_BASE) |= ((2 << (10 * 2)) | (2 << (11 * 2)));  // Sets to AF mode
-
-        GPIO_AFRH(GPIOB_BASE) &= ~((0xF << (2 * 4)) | (0xF << (3 * 4))); // Clear
-        GPIO_AFRH(GPIOB_BASE) |= ((7 << (2 * 4)) | (7 << (3 * 4)));      // Selecting AF to USART3
-
-        USART_BRR(base) = 0x1250; // 9600 BaudRate (Condition: Peripheral Clock (APB1) = 45MHz)
-
-        NVIC_ISER1 |= (1 << 7);
     }
-    // 8N1
-    USART_CR1(base) &= ~(1 << 12);
+}
+
+void uart_set_mode(uint32_t base, uart_mode_t mode) {
+    USART_CR1(base) &= ~((1 << 3) | (1 << 2));
+    USART_CR1(base) |= mode;
+}
+
+void uart_enable(uint32_t base) {
+    USART_CR1(base) |= (1 << 13);
+}
+
+void uart_disable(uint32_t base) {
+    USART_CR1(base) &= ~(1 << 13);
+}
+
+static void uart_gpio_config(uint32_t base) {
+    gpio_config_t uart_config = {.mode = GPIO_MODE_AF,
+                                 .otype = GPIO_OTYPE_PP,
+                                 .ospeed = GPIO_OSPEED_HIGH,
+                                 .pull = GPIO_PULL_UP,
+                                 .af = 7};
+    if(base == USART1_BASE) {
+        gpio_init(GPIOA_BASE, 9, &uart_config);
+        gpio_init(GPIOA_BASE, 10, &uart_config);
+    }
+    else if(base == USART2_BASE) {
+        gpio_init(GPIOA_BASE, 2, &uart_config);
+        gpio_init(GPIOA_BASE, 3, &uart_config);
+    }
+    else if(base == USART3_BASE) {
+        gpio_init(GPIOB_BASE, 10, &uart_config);
+        gpio_init(GPIOB_BASE, 11, &uart_config);
+    }
+}
+
+void uart_set_data_bits(uint32_t base, uint8_t data_bits) {
+    if(data_bits == 9) {
+        USART_CR1(base) |= (1 << 12);
+    }
+    else if(data_bits == 8) {
+        USART_CR1(base) &= ~(1 << 12);
+    }
+}
+
+void uart_set_parity(uint32_t base, uint8_t parity) {
+    if(parity == UART_PARITY_DISABLE) {
+        USART_CR1(base) &= ~((1 << 10) | (1 << 9));
+    }
+    else if(parity == UART_PARITY_EVEN) {
+        USART_CR1(base) &= ~(1 << 9);
+        USART_CR1(base) |= (1 << 10);
+    }
+    else if(parity == UART_PARITY_ODD) {
+        USART_CR1(base) |= (1 << 10) | (1 << 9);
+    }
+}
+
+void uart_set_stop_bits(uint32_t base, uart_stop_bits_t stop_bits) {
     USART_CR2(base) &= ~(3 << 12);
-    USART_CR1(base) &= ~(1 << 10);
+    USART_CR2(base) |= ((stop_bits & 0x03) << 12);
+}
 
-    // USART Enable, TX Enable, RX Enable
-    USART_CR1(base) |= (1 << 13) | (1 << 3) | (1 << 2);
+void uart_set_baud_rate(uint32_t base, uint32_t baudrate) {
+    uint32_t pclk = 0;
+    if(base == USART2_BASE || base == USART3_BASE) {
+        pclk = rcc_get_apb1_freq();
+    }
+    else if(base == USART1_BASE) {
+        pclk = rcc_get_apb2_freq();
+    }
+    USART_BRR(base) = (pclk + (baudrate / 2)) / baudrate;
+}
 
-    // RXNEIE Enalbe
-    USART_CR1(base) |= (1 << 5);
+void uart_interrupt_config(uint32_t base, uint8_t irq_flags) {
+    if(irq_flags == UART_IRQ_NONE)
+        return;
+    if(irq_flags & UART_IRQ_RXNE) {
+        USART_CR1(base) |= (1 << 5);
+    }
+    if(irq_flags & UART_IRQ_TXE) {
+        USART_CR1(base) |= (1 << 7);
+    }
+    switch(base) {
+    case USART1_BASE:
+        NVIC_ISER1 |= (1 << 5);
+        break;
+    case USART2_BASE:
+        NVIC_ISER1 |= (1 << 6);
+        break;
+    case USART3_BASE:
+        NVIC_ISER1 |= (1 << 7);
+        break;
+    default:
+        break;
+    }
+}
+
+void uart_init(uint32_t base, const uart_config_t *config) {
+    uart_clock_enable(base);
+    uart_gpio_config(base);
+
+    uart_set_baud_rate(base, config->baud_rate);
+    uart_set_data_bits(base, config->data_bits);
+    uart_set_parity(base, config->parity);
+    uart_set_stop_bits(base, config->stop_bits);
+    uart_set_mode(base, config->mode);
+
+    uart_interrupt_config(base, config->irq_flags);
+    uart_enable(base);
 }
 
 void uart_send_char(uint32_t base, char c) {

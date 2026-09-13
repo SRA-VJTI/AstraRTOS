@@ -1,6 +1,8 @@
 #ifndef SYSTEM_INIT_H
 #define SYSTEM_INIT_H
 
+#define HCLK_FREQ 180000000
+
 #include <stdint.h>
 
 #define RCC_BASE 0x40023800
@@ -20,5 +22,8 @@ extern volatile uint32_t system_ticks;
 void system_init(void);
 void systick_init(void);
 void SysTick_Handler(void);
+
+uint32_t rcc_get_apb1_freq(void);
+uint32_t rcc_get_apb2_freq(void);
 
 #endif
