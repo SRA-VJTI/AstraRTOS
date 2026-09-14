@@ -7,9 +7,10 @@ volatile uint32_t system_ticks = 0;
 
 void system_init(void) {
     RCC_CR = RCC_CR | (1 << 16); // enable HSE clock using HSEON flag
+#ifndef SIM_QEMU
     while(!(RCC_CR & (1 << 17)))
         ; // wait for ready flag to become 1 (HSERDY)
-
+#endif
     FLASH_ACR = (5 << 0) | // wait 5 states for latency between flash and CPU (LATENCY[3:0])
                 (1 << 8) | // enable prefetch [PRFTEN]
                 (1 << 9) | // enable cache instructions [ICEN]
@@ -21,16 +22,19 @@ void system_init(void) {
                   (1 << 22);   // PLLSRC = HSE
 
     RCC_CR |= (1 << 24); // turn on PLL (PLLON)
+#ifndef SIM_QEMU
     while(!(RCC_CR & (1 << 25)))
         ; // wait for ready flag (PLLRDY)
-
+#endif
     RCC_CFGR = (0 << 4) |  // HPRE, AHB (180MHz)
                (5 << 10) | // PPRE1  APB1 / 4 (45 MHz)
                (4 << 13);  // PPRE2 APB2 / 2 (90 MHz)
 
     RCC_CFGR |= (2 << 0); // set PLL as system clock  (SW)
+#ifndef SIM_QEMU
     while((RCC_CFGR & (3 << 2)) != (2 << 2))
         ; // wait till its active
+#endif
 
     /* Value setup for SW:
        SWS = 0 -> HSI is used

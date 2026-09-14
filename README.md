@@ -45,7 +45,7 @@ make flash                 # openocd flash via stlink
 make clean
 ```
 
-The application entry point is `app/main.c`. To build any sample program from the `samples/` directory instead, pass the file path to the `SOURCE` variable during compilation, and then rebuilding produces a runnable image
+The application entry point is `app/main.c`. To build any sample program from the `samples/` directory instead, pass the file path to the `SOURCE` variable during compilation, and then rebuilding produces a runnable image, for more details on running a sample refer [this](samples/README.md)
 
 ## Contributing
 
