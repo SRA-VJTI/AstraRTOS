@@ -78,8 +78,16 @@ void consumer(void) {
 }
 
 int main() {
+    uart_config_t config = {.baud_rate = 9600,
+                            .data_bits = 8,
+                            .parity = UART_PARITY_DISABLE,
+                            .stop_bits = UART_STOPBITS_1,
+                            .mode = UART_MODE_TX_RX,
+                            .irq_flags = UART_IRQ_RXNE};
+
     system_init();
-    uart_init(USART1_BASE);
+    uart_init(USART1_BASE, &config);
+
     os_heap_init();
     os_queue_init(&number_queue, sizeof(int), 16);
     os_mutex_init(&uart_mutex);
