@@ -31,6 +31,6 @@ extern os_tcb_t *os_current_task_ptr;
 void os_delay(uint32_t t);
 void os_decrement_blocked_tasks(void);
 extern void os_schedule_next_task(void);
-int os_task_create(void (*task_fucntion)(void), uint32_t priority, uint32_t stack_size);
+os_tcb_t *os_task_create(void (*task_fucntion)(void), uint32_t priority, uint32_t stack_size);
 void os_start(void);
 #endif
