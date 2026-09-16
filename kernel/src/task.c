@@ -7,7 +7,7 @@ os_tcb_t *os_tasks[OS_MAX_TASKS_NUM];
 os_tcb_t *os_current_task_ptr = 0;
 static uint32_t os_task_count = 0;
 
-int os_task_create(void (*task_function)(void), uint32_t priority, uint32_t stack_size) {
+os_tcb_t *os_task_create(void (*task_function)(void), uint32_t priority, uint32_t stack_size) {
     if(os_task_count >= OS_MAX_TASKS_NUM) {
         return -1;
     }
@@ -42,7 +42,7 @@ int os_task_create(void (*task_function)(void), uint32_t priority, uint32_t stac
     }
     os_tasks[os_task_count] = task;
     os_task_count += 1;
-    return 0;
+    return task;
 }
 
 void os_delay(uint32_t ticks) {
