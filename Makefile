@@ -54,6 +54,7 @@ size: $(BUILD)/$(TARGET).elf
 flash: $(BUILD)/$(TARGET).elf
 	openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c "program $< verify reset exit"
 
+qemu: CFLAGS += -DSIM_QEMU
 qemu: $(BUILD)/$(TARGET).elf
 	qemu-system-arm -M netduinoplus2 -cpu cortex-m4 -display none -serial null -serial mon:stdio -kernel $<
 
