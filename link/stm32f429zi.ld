@@ -2,6 +2,7 @@
 
 _estack = ORIGIN(SRAM) + LENGTH(SRAM);  /* start of stack (downwards growth) */
 _Min_stack_size = 1024;  /* stack size reserved for the msp */
+_Stack_pool_size = 32 * 1024; /* stack pool reserved for task stacks */
 
 MEMORY
 {
@@ -57,6 +58,9 @@ SECTIONS
         . = ALIGN(4);
         _ebss = .;
     } >SRAM
-    _sheap = ALIGN(_ebss,32);
+
+    _sstacks = ALIGN(_ebss,32);
+    _estacks = _sstacks + _Stack_pool_size;
+    _sheap = ALIGN(_estacks,32);
     _eheap = _estack - _Min_stack_size;
 }
