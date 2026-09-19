@@ -1,6 +1,7 @@
 #include "heap.h"
 #include "mutex.h"
 #include "mpu.h"
+#include "stack_pool.h"
 
 #define ALIGN(x, a) (((x) + ((a) - 1)) & ~((uint32_t)(a) - 1))
 
@@ -15,6 +16,7 @@ void os_heap_init() {
     heap_head->is_free = 1;
     heap_head->size = (uint8_t *)&_eheap - (uint8_t *)&_sheap - sizeof(heap_block_t);
     heap_head->next = 0;
+    os_stack_pool_init();
 }
 
 void *os_malloc(uint32_t size) {

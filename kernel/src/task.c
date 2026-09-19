@@ -1,5 +1,6 @@
 #include "task.h"
 #include "heap.h"
+#include "stack_pool.h"
 #include "../port/system_init.h"
 #define SHPR3 (*(volatile uint8_t *)0xE000ED22) /*sets PendSV priority*/
 #define ICSR (*((volatile uint32_t *)0xE000ED04))
@@ -15,7 +16,7 @@ os_tcb_t *os_task_create(void (*task_function)(void), uint32_t priority, uint32_
     if(task == 0) {
         return -1;
     }
-    uint32_t *task_stack = (uint32_t *)os_malloc(sizeof(uint32_t) * stack_size);
+    uint32_t *task_stack = (uint32_t *)os_stack_pool_alloc((sizeof(uint32_t) * stack_size), 32);
     if(task_stack == 0) {
         os_mfree(task);
         return -1;
