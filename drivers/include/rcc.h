@@ -23,6 +23,9 @@
 #define USART2_EN 2
 #define USART3_EN 3
 
+#define ADC1_EN 1
+#define ADC2_EN 2
+#define ADC3_EN 3
 #define TIM1_BASE 0x40010000
 #define TIM2_BASE 0x40000000
 #define TIM3_BASE 0x40000400
@@ -49,6 +52,8 @@ void rcc_enable_gpio(uint8_t port);
 void rcc_disable_gpio(uint8_t port);
 void rcc_enable_uart(uint8_t uart);
 void rcc_disable_uart(uint8_t uart);
+void rcc_enable_adc(uint8_t adc);
+void rcc_disable_adc(uint8_t adc);
 void rcc_enable_timer(uint32_t timer);
 uint32_t rcc_get_apb1_freq(void);
 uint32_t rcc_get_apb2_freq(void);
