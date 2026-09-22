@@ -10,16 +10,16 @@ static uint32_t os_task_count = 0;
 
 os_tcb_t *os_task_create(void (*task_function)(void), uint32_t priority, uint32_t stack_size) {
     if(os_task_count >= OS_MAX_TASKS_NUM) {
-        return -1;
+        return (void *)0;
     }
     os_tcb_t *task = (os_tcb_t *)os_malloc(sizeof(os_tcb_t));
     if(task == 0) {
-        return -1;
+        return (void *)0;
     }
     uint32_t *task_stack = (uint32_t *)os_stack_pool_alloc((sizeof(uint32_t) * stack_size), 32);
     if(task_stack == 0) {
         os_mfree(task);
-        return -1;
+        return (void *)0;
     }
     uint32_t *task_stack_ptr = &task_stack[stack_size - 1];
     *task_stack_ptr = 0x01000000;
