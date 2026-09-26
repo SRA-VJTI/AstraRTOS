@@ -1,0 +1,12 @@
+$name="stm32f429zi_disc1"
+$exec=@build/astra.elf
+
+mach create $name
+machine LoadPlatformDescription @renode/stm32f429zi_disc1.repl
+sysbus LoadELF $exec
+showAnalyzer usart1
+showAnalyzer usart2
+showAnalyzer usart3
+
+
+start

@@ -1,0 +1,13 @@
+using "platforms/cpus/stm32f429.repl"
+
+UserLed1: Miscellaneous.LED @ gpioPortG 13 //green LED
+
+UserLed2: Miscellaneous.LED @ gpioPortG 14 //red LED
+
+UserButton1: Miscellaneous.Button @ gpioPortA 0
+    invert: false
+    -> gpioPortA@0
+    
+gpioPortG:
+    13 -> UserLed1@0
+    14 -> UserLed2@0

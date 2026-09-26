@@ -27,6 +27,7 @@ The `docs/` directory contains the STM32F4 reference and programming manual PDFs
 - `arm-none-eabi-gcc`
 - `make`
 - `qemu-system-arm`
+- [`renode`](https://github.com/renode/renode/blob/master/README.md#installation)
 - `openocd`
 
 On Debian / Ubuntu:
@@ -41,6 +42,8 @@ sudo apt install gcc-arm-none-eabi make qemu-system-arm openocd
 make                       # build/astra.elf, build/astra.bin
 make SOURCE=path/to/file.c # build any file in the directory
 make qemu                  # run under qemu-system-arm
+make renode                # run under renode, in the current console
+make renode_ui             # run under renode, in a separate renode graphical ui
 make flash                 # openocd flash via stlink
 make clean
 ```

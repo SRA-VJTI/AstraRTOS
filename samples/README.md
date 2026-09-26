@@ -25,3 +25,19 @@ to clear the old build files first, then
 ```bash
 make qemu SOURCE=path/to/sample/main.c
 ```
+
+## Renode
+To simulate in Renode
+```bash
+make clean
+```
+to clear the old build files first, then
+
+```bash
+make renode SOURCE=path/to/sample/main.c
+```
+to run in headless mode
+```bash
+make renode_ui SOURCE=path/to/sample/main.c
+```
+to run in a graphical mode

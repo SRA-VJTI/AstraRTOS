@@ -58,7 +58,12 @@ qemu: CFLAGS += -DSIM_QEMU
 qemu: $(BUILD)/$(TARGET).elf
 	qemu-system-arm -M netduinoplus2 -cpu cortex-m4 -display none -serial null -serial mon:stdio -kernel $<
 
+renode: $(BUILD)/$(TARGET).elf
+	renode --console -e "start @renode/stm32f429zi_disc1.resc"
+renode_ui: $(BUILD)/$(TARGET).elf
+	renode --ui -e "start @renode/stm32f429zi_disc1.resc"
+
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all clean flash size
+.PHONY: all clean flash size qemu renode renode_ui
