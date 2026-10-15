@@ -1,5 +1,4 @@
 #include "heap.h"
-#include "mutex.h"
 #include "mpu.h"
 #include "stack_pool.h"
 
@@ -8,10 +7,8 @@
 extern uint8_t _sheap;
 extern uint8_t _eheap;
 static heap_block_t *heap_head = 0;
-os_mutex_t mutex_heap;
 
 void os_heap_init() {
-    os_mutex_init(&mutex_heap);
     heap_head = (heap_block_t *)&_sheap;
     heap_head->is_free = 1;
     heap_head->size = (uint8_t *)&_eheap - (uint8_t *)&_sheap - sizeof(heap_block_t);
@@ -20,7 +17,6 @@ void os_heap_init() {
 }
 
 void *os_malloc(uint32_t size) {
-    os_mutex_take(&mutex_heap);
     heap_block_t *current = heap_head;
     uint32_t aligned_size;
     if(mpu_status == 0) {
@@ -44,12 +40,10 @@ void *os_malloc(uint32_t size) {
             else {
                 current->is_free = 0;
             }
-            os_mutex_give(&mutex_heap);
             return (void *)((uint8_t *)current + sizeof(heap_block_t));
         }
         current = current->next;
     }
-    os_mutex_give(&mutex_heap);
     return 0;
 }
 
@@ -57,7 +51,6 @@ void os_mfree(void *mem) {
     if(mem == 0) {
         return;
     }
-    os_mutex_take(&mutex_heap);
     heap_block_t *block = (heap_block_t *)((uint8_t *)mem - sizeof(heap_block_t));
     block->is_free = 1;
     heap_block_t *current = heap_head;
@@ -70,5 +63,4 @@ void os_mfree(void *mem) {
             current = current->next;
         }
     }
-    os_mutex_give(&mutex_heap);
 }
