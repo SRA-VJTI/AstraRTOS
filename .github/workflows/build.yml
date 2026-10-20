@@ -24,3 +24,12 @@ jobs:
       
     - name: build-qemu
       run: timeout 60s make qemu || [ $? -eq 124 ]
+
+    - name: build-samples
+      run: |
+        for source in samples/*/*.c
+        do
+          echo "building $source"
+          make clean
+          make SOURCE=$source
+        done
